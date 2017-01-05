@@ -1,0 +1,32 @@
+{
+  "name": "anim-sequence",
+  "version": "0.0.1",
+  "title": "AnimSequence",
+  "description": "Keyframe Animation Controller",
+  "keywords": [],
+  "main": "anim-sequence.min.js",
+  "jsnext:main": "./src/anim-sequence.js",
+  "devDependencies": {
+    "babel-core": "^6.20.0",
+    "babel-loader": "^6.2.9",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-es2015": "^6.18.0",
+    "skeleton-loader": "0.0.5",
+    "webpack": "^1.13.3"
+  },
+  "scripts": {
+    "build": "webpack --mode=build",
+    "dev": "webpack --mode=dev"
+  },
+  "homepage": "https://github.com/anseki/anim-sequence",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/anseki/anim-sequence.git"
+  },
+  "bugs": "https://github.com/anseki/anim-sequence/issues",
+  "license": "MIT",
+  "author": {
+    "name": "anseki",
+    "url": "https://github.com/anseki"
+  }
+}

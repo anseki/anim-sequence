@@ -1,0 +1,25 @@
+{
+  "name": "anim-sequence",
+  "version": "0.0.1",
+  "description": "Keyframe Animation Controller",
+  "keywords": [
+  ],
+  "main": "anim-sequence.min.js",
+  "homepage": "https://github.com/anseki/anim-sequence",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/anseki/anim-sequence.git"
+  },
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "license": "MIT",
+  "authors": [
+    "anseki <AnSeki.aff@gmail.com>"
+  ]
+}
