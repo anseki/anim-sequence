@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="Simple Animation Controller with Timeline">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/syntax.css">
+  <link rel="stylesheet" href="css/default.css">
+  <link rel="stylesheet" href="css/ex.css">
+  <script src="js/anim-sequence.min.js"></script>
+  <script src="js/css-prefix.min.js"></script>
+  <script src="js/draggable.min.js"></script>
+  <script src="js/bezier.min.js"></script>
+  <script src="js/ex.js"></script>
+
+  <title>AnimSequence</title>
+</head>
+<body>
+  <header>
+    <h1><a href="./">AnimSequence</a></h1>
+    <ul id="gh"><li><a href="https://github.com/anseki/anim-sequence/tarball/master">Download TAR.GZ</a></li><li><a href="https://github.com/anseki/anim-sequence/zipball/master">Download ZIP</a></li><li><a href="https://github.com/anseki/anim-sequence">View on GitHub</a></li></ul>
+  </header>
+  <main>
+
+<p>Simple Animation Controller with Timeline</p>
+
+<!-- include "ex-010.html" -->
+<!-- ================ ex -->
+<div id="ex-010-01" class="stage">
+  <img id="ex-010-01-1" src="img/ex-010-01-1.png" alt="ex-010-01-1.png" width="141" height="159">
+  <img id="ex-010-01-2" src="img/ex-010-01-2.png" alt="ex-010-01-2.png" width="78" height="63">
+  <svg viewBox="0 0 784 320">
+    <defs>
+      <symbol id="ex-010-01-marker-symbol" viewBox="0 0 28 32">
+        <path d="M0,0 C4,12 28,16 28,16 C28,16 4,20 0,32 C0,18 4,16 4,16 C4,16 0,14 0,0 z"></path>
+      </symbol>
+    </defs>
+    <path id="ex-010-01-line" d="M146,151 C351,-20 546.8,-17 700,145.7"></path>
+    <!-- Add "px" to x and y to set unitType -->
+    <use id="ex-010-01-marker" xlink:href="#ex-010-01-marker-symbol" x="0px" y="0px" width="28px" height="32px"/>
+  </svg>
+</div>
+
+<p><a href="https://anseki.github.io/leader-line/">LeaderLine</a> works by the same mechanism as the example above.</p>
+
+<div id="ex-010-02" class="stage">
+  <div id="ex-010-02-ring"></div>
+  <img id="ex-010-02-1" src="img/ex-010-02-1.png" alt="ex-010-02-1.png" width="100" height="92">
+</div>
+
+<script>
+window.addEventListener('load', function() {
+  'use strict';
+
+  var line = document.getElementById('ex-010-01-line'),
+    marker = document.getElementById('ex-010-01-marker'),
+    markerSymbol = document.querySelector('#ex-010-01-marker-symbol path'),
+
+    lineStyle = line.style,
+    lineLen = line.getTotalLength(),
+    transform = document.querySelector('#ex-010-01 svg').createSVGTransform(),
+
+    POINTS = [
+      {x: 146, y: 151},
+      {x: 351, y: -20},
+      {x: 546.8, y: -17},
+      {x: 700, y: 145.7}
+    ],
+    MARKER_WIDTH = 28, MARKER_HEIGHT = 32,
+    MARKER_X_OFFSET = -MARKER_WIDTH / 2,
+    MARKER_Y_OFFSET = -MARKER_HEIGHT / 2,
+
+    IS_TRIDENT = !!document.uniqueID,
+    IS_EDGE = '-ms-scroll-limit' in document.documentElement.style &&
+      '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled;
+
+  lineStyle.strokeDasharray = lineLen + ',' + lineLen;
+  lineStyle.strokeDashoffset = -lineLen + 'px';
+  markerSymbol.transform.baseVal.appendItem(transform);
+
+  initTimeline(
+    document.getElementById('ex-010-01'),
+    function(outputRatio) {
+      var curLen = outputRatio * lineLen,
+        point = getPointOnCubic(POINTS[0], POINTS[1], POINTS[2], POINTS[3],
+          getCubicT(POINTS[0], POINTS[1], POINTS[2], POINTS[3], curLen));
+      return {
+        lineOffset: lineLen - curLen + 'px',
+        markerX: point.x + MARKER_X_OFFSET,
+        markerY: point.y + MARKER_Y_OFFSET,
+        markerAngle: point.angle
+      };
+    },
+    function(value) {
+      lineStyle.strokeDashoffset = value.lineOffset;
+      transform.setRotate(value.markerAngle, MARKER_WIDTH / 2, MARKER_HEIGHT / 2);
+      if (IS_TRIDENT || IS_EDGE) { // bug
+        markerSymbol.transform.baseVal.clear();
+        markerSymbol.transform.baseVal.appendItem(transform);
+      }
+      marker.x.baseVal.value = value.markerX;
+      marker.y.baseVal.value = value.markerY;
+    },
+    3000, [0.05, 0.6, 1, 0.45], 1000);
+
+  // ------------------------
+
+  var img = document.getElementById('ex-010-02-1'),
+    imgStyle = img.style,
+    prop = CSSPrefix.getProp('transform', img);
+
+  initTimeline(
+    document.getElementById('ex-010-02'),
+    function(outputRatio) {
+      return 'rotate(' + outputRatio * -360 + 'deg)';
+    },
+    function(value) {
+      imgStyle[prop] = value;
+    },
+    3000, [0.1, 0.8, 0.9, 0.2]);
+
+});
+</script>
+<!-- ================ /ex -->
+<!-- /include "ex-010.html" -->
+
+<p>Simple lightweight library for high performance animation in a web page, make preparations for each frame and call the frames with optimized timeline for animation.</p>
+
+<h2 id="methods">Methods</h2>
+
+<h3 id="animsequenceadd"><code>AnimSequence.add</code></h3>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">animId</span> <span class="o">=</span> <span class="nx">AnimSequence</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">valueCallback</span><span class="p">,</span> <span class="nx">frameCallback</span><span class="p">,</span> <span class="nx">duration</span><span class="p">,</span> <span class="nx">count</span><span class="p">,</span> <span class="nx">timing</span><span class="p">,</span> <span class="nx">reverse</span><span class="p">,</span> <span class="nx">timeRatio</span><span class="p">)</span>
+</code></pre></div>
+<p>Add new animation, and return <code>animId</code> that is used to start and remove the animation.  </p>
+
+<p>For example:</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">animId</span> <span class="o">=</span> <span class="nx">AnimSequence</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span>
+  <span class="kd">function</span><span class="p">(</span><span class="nx">outputRatio</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="mi">80</span> <span class="o">+</span> <span class="p">(</span><span class="mi">680</span> <span class="o">-</span> <span class="mi">80</span><span class="p">)</span> <span class="o">*</span> <span class="nx">outputRatio</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+  <span class="p">},</span>
+  <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">element</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+  <span class="p">},</span>
+  <span class="mi">3000</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;ease-in-out&#39;</span><span class="p">);</span>
+</code></pre></div>
+<!-- include "ex-020.html" -->
+<!-- ================ ex -->
+<div id="ex-020" class="stage">
+  <div id="ex-020-01"></div>
+</div>
+
+<script>
+window.addEventListener('load', function() {
+  'use strict';
+
+  var box = document.getElementById('ex-020-01'),
+    boxStyle = box.style;
+
+  AnimSequence.add(
+    function(outputRatio) {
+      return 80 + (680 - 80) * outputRatio + 'px';
+    },
+    function(value) {
+      boxStyle.left = value;
+    },
+    3000, 0, 'ease-in-out');
+
+});
+</script>
+<!-- ================ /ex -->
+<!-- /include "ex-020.html" -->
+
+<p>Arguments:</p>
+
+<h4 id="valuecallback"><code>valueCallback</code></h4>
+
+<p><em>Type:</em> function or <code>undefined</code><br><em>Default:</em> <code>undefined</code></p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">value</span> <span class="o">=</span> <span class="nx">valueCallback</span><span class="p">(</span><span class="nx">outputRatio</span><span class="p">)</span>
+</code></pre></div>
+<p>A function that returns a value that is used to draw each frame.<br>For high performance animation, the function is called for all frames <em>before</em> the animation starts. That is, it makes preparations for each value that is used to draw the frame.</p>
+
+<p><code>outputRatio</code> is a number ranging from <code>0</code> to <code>1</code> to calculate a value.<br>The function can return something that is used to draw an frame. The value can be an Object or Array that contains multiple values.</p>
+
+<p>For example, move an element rightward, it changes a <code>left</code> CSS property, from <code>80px</code> to <code>680px</code>.</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Return `80px` when `outputRatio` is `0%` (0), `680px` when `outputRatio` is `100%` (1).</span>
+<span class="kd">function</span><span class="p">(</span><span class="nx">outputRatio</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// This value is used by `frameCallback` to draw a frame.</span>
+  <span class="k">return</span> <span class="mi">80</span> <span class="o">+</span> <span class="p">(</span><span class="mi">680</span> <span class="o">-</span> <span class="mi">80</span><span class="p">)</span> <span class="o">*</span> <span class="nx">outputRatio</span> <span class="o">+</span> <span class="s1">&#39;px&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="framecallback"><code>frameCallback</code></h4>
+
+<p><em>Type:</em> function</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">toNext</span> <span class="o">=</span> <span class="nx">frameCallback</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">finish</span><span class="p">,</span> <span class="nx">timeRatio</span><span class="p">,</span> <span class="nx">outputRatio</span><span class="p">)</span>
+</code></pre></div>
+<p>A function that draws a frame.<br>The function is called when it should draw a frame, it draws a frame with passed arguments.</p>
+
+<ul>
+<li><code>value</code> is something that was returned by <a href="#valuecallback"><code>valueCallback</code></a>.</li>
+<li><code>finish</code> is <code>true</code> if the function should draw a last frame.</li>
+<li><code>timeRatio</code> is a number ranging from <code>0</code> to <code>1</code> to indicate the progress time of the animation played. It means also the ratio of the progress time and <a href="#duration"><code>duration</code></a>.</li>
+<li><code>outputRatio</code> is the same as an argument of <a href="#valuecallback"><code>valueCallback</code></a>.</li>
+</ul>
+
+<p>If the function returns <code>false</code>, stop the animation forcedly.</p>
+
+<p>For example, move an element rightward, it changes a <code>left</code> CSS property.</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">finish</span><span class="p">,</span> <span class="nx">timeRatio</span><span class="p">,</span> <span class="nx">outputRatio</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">element</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">left</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span> <span class="c1">// It was already calculated by `valueCallback`.</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">finish</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">element</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">backgroundColor</span> <span class="o">=</span> <span class="s1">&#39;red&#39;</span><span class="p">;</span> <span class="c1">// Change the color to red at the right.</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<h4 id="duration"><code>duration</code></h4>
+
+<p><em>Type:</em> number</p>
+
+<p>A number determining how long (milliseconds) the animation will run.</p>
+
+<h4 id="count"><code>count</code></h4>
+
+<p><em>Type:</em> number<br><em>Default:</em> <code>0</code></p>
+
+<p>A number of times the animation should repeat. The animation will repeat forever if <code>0</code> is specified.</p>
+
+<h4 id="timing"><code>timing</code></h4>
+
+<p><em>Type:</em> Array or string</p>
+
+<p>An Array that is <code>[x1, y1, x2, y2]</code> as a &quot;timing function&quot; that indicates how to change the speed. It works same as that of <a href="https://developer.mozilla.org/en/docs/Web/CSS/timing-function">CSS animation</a>.</p>
+
+<p>You can specify one of the following keywords also. These values mean <a href="https://developer.mozilla.org/en/docs/Web/CSS/timing-function#Keywords_for_common_timing-functions">keywords for common timing functions</a>.</p>
+
+<ul>
+<li><code>ease</code></li>
+<li><code>linear</code></li>
+<li><code>ease-in</code></li>
+<li><code>ease-out</code></li>
+<li><code>ease-in-out</code></li>
+</ul>
+
+<h4 id="reverse"><code>reverse</code></h4>
+
+<p><em>Type:</em> boolean<br><em>Default:</em> <code>false</code></p>
+
+<p>The animation plays backward if <code>true</code> is specified.<br>It can be specified by <a href="#animsequencestart"><code>AnimSequence.start</code></a> also.</p>
+
+<h4 id="timeratio"><code>timeRatio</code></h4>
+
+<p><em>Type:</em> number or boolean<br><em>Default:</em> <code>0</code></p>
+
+<p>A number ranging from <code>0</code> to <code>1</code> to play from the midst or <code>false</code> that prevents it starting.<br>It can be specified by <a href="#animsequencestart"><code>AnimSequence.start</code></a> also.</p>
+
+<h3 id="animsequenceremove"><code>AnimSequence.remove</code></h3>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">AnimSequence</span><span class="p">.</span><span class="nx">remove</span><span class="p">(</span><span class="nx">animId</span><span class="p">)</span>
+</code></pre></div>
+<p>Remove an animation.</p>
+
+<p>Arguments:</p>
+
+<h4 id="animid"><code>animId</code></h4>
+
+<p><em>Type:</em> number</p>
+
+<p>The <code>animId</code> that was returned by <a href="#animsequenceadd"><code>AnimSequence.add</code></a>.</p>
+
+<h3 id="animsequencestart"><code>AnimSequence.start</code></h3>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">AnimSequence</span><span class="p">.</span><span class="nx">start</span><span class="p">(</span><span class="nx">animId</span><span class="p">,</span> <span class="nx">reverse</span><span class="p">,</span> <span class="nx">timeRatio</span><span class="p">)</span>
+</code></pre></div>
+<p>Start an animation.</p>
+
+<p>Arguments:</p>
+
+<h4 id="animid"><code>animId</code></h4>
+
+<p><em>Type:</em> number</p>
+
+<p>The <code>animId</code> that was returned by <a href="#animsequenceadd"><code>AnimSequence.add</code></a>.</p>
+
+<h4 id="reverse"><code>reverse</code></h4>
+
+<p><em>Type:</em> boolean<br><em>Default:</em> <code>false</code></p>
+
+<p>The animation plays backward if <code>true</code> is specified.</p>
+
+<h4 id="timeratio"><code>timeRatio</code></h4>
+
+<p><em>Type:</em> number<br><em>Default:</em> <code>0</code></p>
+
+<p>A number ranging from <code>0</code> to <code>1</code> to play from the midst.</p>
+
+<h3 id="animsequencestop"><code>AnimSequence.stop</code></h3>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">timeRatio</span> <span class="o">=</span> <span class="nx">AnimSequence</span><span class="p">.</span><span class="nx">stop</span><span class="p">(</span><span class="nx">animId</span><span class="p">,</span> <span class="nx">getTimeRatioByFrame</span><span class="p">)</span>
+</code></pre></div>
+<p>Stop an animation.<br><code>timeRatio</code> is a number ranging from <code>0</code> to <code>1</code> for restarting the animation from the frame that was stopped.</p>
+
+<p>Arguments:</p>
+
+<h4 id="animid"><code>animId</code></h4>
+
+<p><em>Type:</em> number</p>
+
+<p>The <code>animId</code> that was returned by <a href="#animsequenceadd"><code>AnimSequence.add</code></a>.</p>
+
+<h4 id="gettimeratiobyframe"><code>getTimeRatioByFrame</code></h4>
+
+<p><em>Type:</em> boolean<br><em>Default:</em> <code>false</code></p>
+
+<p>If <code>true</code> is specified, return <code>timeRatio</code> of the last played frame.</p>
+
+<h3 id="animsequencevalidtiming"><code>AnimSequence.validTiming</code></h3>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">isValid</span> <span class="o">=</span> <span class="nx">AnimSequence</span><span class="p">.</span><span class="nx">validTiming</span><span class="p">(</span><span class="nx">timing</span><span class="p">)</span>
+</code></pre></div>
+<p>Check whether an Array or string as <a href="#timing"><code>timing</code></a> is valid.</p>
+
+<hr>
+
+<p>Thanks for images: <a href="http://www.cgvector.com/">CGvector</a>, <a href="https://www.vecteezy.com/">Vecteezy</a></p>
+
+  </main>
+  <footer>
+    <p class="copyright">AnimSequence maintained by <a href="https://github.com/anseki">anseki</a></p>
+  </footer>
+
+</body>
+</html>
