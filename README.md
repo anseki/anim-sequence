@@ -2,10 +2,10 @@
 
 Simple Animation Controller with Timeline
 
-**<a href="http://anseki.github.io/anim-sequence/">Document and Examples http://anseki.github.io/anim-sequence/</a>**
+**<a href="https://anseki.github.io/anim-sequence/">Document and Examples https://anseki.github.io/anim-sequence/</a>**
 
-[![ss-01](ss-01.gif)](http://anseki.github.io/anim-sequence/)
-[![ss-02](ss-02.gif)](http://anseki.github.io/anim-sequence/)
+[![ss-01](ss-01.gif)](https://anseki.github.io/anim-sequence/)
+[![ss-02](ss-02.gif)](https://anseki.github.io/anim-sequence/)
 
 Simple lightweight library for high performance animation in a web page, make preparations for each frame and call the frames with optimized timeline for animation.
 

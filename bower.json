@@ -11,7 +11,7 @@
     "requestAnimationFrame"
   ],
   "main": "anim-sequence.min.js",
-  "homepage": "http://anseki.github.io/anim-sequence/",
+  "homepage": "https://anseki.github.io/anim-sequence/",
   "repository": {
     "type": "git",
     "url": "git://github.com/anseki/anim-sequence.git"
