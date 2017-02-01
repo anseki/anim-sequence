@@ -79,7 +79,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 /*
  * AnimSequence
- * https://github.com/anseki/anim-sequence
+ * https://anseki.github.io/anim-sequence/
  *
  * Copyright (c) 2017 anseki
  * Licensed under the MIT license.
