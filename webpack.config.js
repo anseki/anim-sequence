@@ -2,51 +2,73 @@
 
 'use strict';
 
-const webpack = require('webpack'),
+const
+  BASE_NAME = 'anim-sequence',
+  OBJECT_NAME = 'AnimSequence',
+
+  webpack = require('webpack'),
   path = require('path'),
-  BUILD = process.env.NODE_ENV === 'production',
   PKG = require('./package'),
 
-  BABEL_TARGET_PACKAGES = [
-  ].map(packageName => path.resolve(__dirname, `node_modules/${packageName}`) + path.sep),
+  BUILD = process.env.NODE_ENV === 'production',
 
-  BABEL_PARAMS = {
-    presets: ['es2015'],
-    plugins: ['add-module-exports']
+  SRC_PATH = path.resolve(__dirname, 'src'),
+  ENTRY_PATH = path.resolve(SRC_PATH, `${BASE_NAME}.js`),
+  BUILD_PATH = BUILD ? __dirname : path.resolve(__dirname, 'test'),
+  BUILD_FILE = `${BASE_NAME}${BUILD ? '.min.js' : '.js'}`,
+
+  BABEL_RULE = {
+    loader: 'babel-loader',
+    options: {
+      presets: ['es2015'],
+      plugins: ['add-module-exports']
+    }
   };
 
+/**
+ * @param {(string|string[])} tag - A tag or an array of tags that are removed.
+ * @param {string} content - A content that is processed.
+ * @param {string} srcPath - A full path to the source file.
+ * @param {(string|RegExp|Array)} pathTest - The content is changed when any test passed.
+ *     A string which must be at the start of it, a RegExp which tests it or an array of these.
+ * @returns {string} - A content that might have been changed.
+ */
+function preProc(tag, content, srcPath, pathTest) {
+  if (srcPath && pathTest &&
+      !(Array.isArray(pathTest) ? pathTest : [pathTest]).some(test =>
+        test instanceof RegExp ? test.test(srcPath) : srcPath.indexOf(test) === 0)) {
+    return content;
+  }
+  content = content ? content + '' : '';
+  return (Array.isArray(tag) ? tag : [tag]).reduce((content, tag) => content
+    .replace(new RegExp(`[^\\n]*\\[${tag}/\\][^\\n]*\\n?`, 'g'), '')
+    .replace(new RegExp(`/\\*\\s*\\[${tag}\\]\\s*\\*/[\\s\\S]*?/\\*\\s*\\[/${tag}\\]\\s*\\*/`, 'g'), '')
+    .replace(new RegExp(`[^\\n]*\\[${tag}\\][\\s\\S]*?\\[/${tag}\\][^\\n]*\\n?`, 'g'), ''), content);
+}
+
 module.exports = {
-  entry: './src/anim-sequence.js',
+  entry: ENTRY_PATH,
   output: {
-    path: BUILD ? __dirname : path.join(__dirname, 'test'),
-    filename: BUILD ? 'anim-sequence.min.js' : 'anim-sequence.js',
-    library: 'AnimSequence',
+    path: BUILD_PATH,
+    filename: BUILD_FILE,
+    library: OBJECT_NAME,
     libraryTarget: 'var'
   },
   module: {
     rules: [
       {
         test: /\.js$/,
-        exclude: absPath => !BABEL_TARGET_PACKAGES.find(target => absPath.indexOf(target) === 0) &&
-          absPath.split(path.sep).includes('node_modules'),
-        use: BUILD ? [
-          {
-            loader: 'babel-loader',
-            options: BABEL_PARAMS
-          },
+        use: [
+          BABEL_RULE,
           {
             loader: 'skeleton-loader',
             options: {
-              procedure: content => (content + '')
-                .replace(/[^\n]*\[DEBUG\/\][^\n]*\n?/g, '')
-                .replace(/\/\*\s*\[DEBUG\]\s*\*\/[\s\S]*?\/\*\s*\[\/DEBUG\]\s*\*\//g, '')
-                .replace(/[^\n]*\[DEBUG\][\s\S]*?\[\/DEBUG\][^\n]*\n?/g, '')
+              procedure: function(content) {
+                return BUILD ?
+                  preProc('DEBUG', content, this.resourcePath, SRC_PATH) :
+                  content;
+              }
             }
-          }
-        ] : [
-          {
-            loader: 'babel-loader',
-            options: BABEL_PARAMS
           }
         ]
       }
