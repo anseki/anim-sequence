@@ -38,7 +38,7 @@ var
    * @param {boolean} finish
    * @param {number} timeRatio - Progress [0, 1].
    * @param {number} outputRatio - Progress [0, 1].
-   * @returns {} - `false` to stop.
+   * @returns {} `false` to stop.
    */
 
   /**
@@ -152,7 +152,7 @@ var AnimSequence = {
    * @param {(string|number[])} timing - FUNC_KEYS or [x1, y1, x2, y2]
    * @param {(boolean|null)} reverse - playing property
    * @param {number|boolean} [timeRatio] - Play from the midst. [0, 1], or `false` that prevents it starting.
-   * @returns {number} - animId to control the task.
+   * @returns {number} animId to control the task.
    */
   add: function(valueCallback, frameCallback, duration, count, timing, reverse, timeRatio) {
     var animId = ++newAnimId, task, frames,
@@ -248,7 +248,7 @@ var AnimSequence = {
   /**
    * @param {number} animId - Target task.
    * @param {boolean} [getTimeRatioByFrame] - Return timeRatio of last frame that ran. [0, 1]
-   * @returns {(number|undefined)} - timeRatio [0, 1]
+   * @returns {(number|undefined)} timeRatio [0, 1]
    */
   stop: function(animId, getTimeRatioByFrame) {
     var timeRatio;
