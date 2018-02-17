@@ -14,6 +14,14 @@
   "main": "anim-sequence.min.js",
   "module": "./src/anim-sequence.js",
   "jsnext:main": "./src/anim-sequence.js",
+  "files": [
+    "anim-sequence.min.js",
+    "src/*.js",
+    "!src/*.proc.*",
+    "webpack.config.rules.js",
+    "bower.json",
+    "LICENSE-MIT"
+  ],
   "devDependencies": {
     "babel-core": "^6.24.0",
     "babel-loader": "^7.0.0-beta.1",
