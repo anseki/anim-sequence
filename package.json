@@ -12,6 +12,7 @@
     "requestAnimationFrame"
   ],
   "main": "anim-sequence.min.js",
+  "module": "./src/anim-sequence.js",
   "jsnext:main": "./src/anim-sequence.js",
   "devDependencies": {
     "babel-core": "^6.24.0",
