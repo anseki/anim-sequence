@@ -12,20 +12,16 @@
     "requestAnimationFrame"
   ],
   "main": "anim-sequence.min.js",
-  "module": "./src/anim-sequence.js",
-  "jsnext:main": "./src/anim-sequence.js",
+  "module": "anim-sequence.esm.js",
+  "jsnext:main": "anim-sequence.esm.js",
   "files": [
-    "anim-sequence.min.js",
-    "src/*.js",
-    "!src/*.proc.*",
-    "webpack.config.rules.js",
+    "anim-sequence?(-debug).@(min|esm).js",
     "bower.json",
     "LICENSE-MIT"
   ],
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
-    "babel-plugin-add-module-exports": "^0.2.1",
     "babel-preset-es2015": "^6.24.1",
     "cross-env": "^5.1.3",
     "pre-proc": "^0.2.8",
@@ -34,8 +30,8 @@
     "webpack": "^3.11.0"
   },
   "scripts": {
-    "build": "cross-env NODE_ENV=production webpack",
-    "dev": "webpack --display-modules"
+    "build": "cross-env NODE_ENV=production webpack --verbose",
+    "dev": "webpack --verbose"
   },
   "homepage": "https://anseki.github.io/anim-sequence/",
   "repository": {

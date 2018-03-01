@@ -66,14 +66,10 @@ var AnimSequence =
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /*
  * AnimSequence
  * https://anseki.github.io/anim-sequence/
@@ -379,9 +375,8 @@ var AnimSequence = {
   }
 };
 
-exports.default = AnimSequence;
-module.exports = exports['default'];
+/* harmony default export */ __webpack_exports__["default"] = (AnimSequence);
 
 /***/ })
-/******/ ]);
+/******/ ])["default"];
 //# sourceMappingURL=anim-sequence.js.map
