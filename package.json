@@ -16,8 +16,7 @@
   "jsnext:main": "anim-sequence.esm.js",
   "files": [
     "anim-sequence?(-debug).@(min|esm).js",
-    "bower.json",
-    "LICENSE-MIT"
+    "bower.json"
   ],
   "devDependencies": {
     "babel-core": "^6.26.0",
