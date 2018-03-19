@@ -12,10 +12,10 @@
     "requestAnimationFrame"
   ],
   "main": "anim-sequence.min.js",
-  "module": "anim-sequence.esm.js",
-  "jsnext:main": "anim-sequence.esm.js",
+  "module": "anim-sequence.mjs",
+  "jsnext:main": "anim-sequence.mjs",
   "files": [
-    "anim-sequence?(-debug).@(min|esm).js",
+    "anim-sequence?(-debug).@(min.js|mjs)",
     "bower.json"
   ],
   "devDependencies": {
@@ -26,7 +26,8 @@
     "pre-proc": "^0.2.8",
     "pre-proc-loader": "^1.0.9",
     "skeleton-loader": "^1.1.5",
-    "webpack": "^4.1.1"
+    "webpack": "^4.1.1",
+    "webpack-cli": "^2.0.12"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --verbose",
