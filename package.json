@@ -12,10 +12,10 @@
     "requestAnimationFrame"
   ],
   "main": "anim-sequence.min.js",
-  "module": "anim-sequence.mjs",
-  "jsnext:main": "anim-sequence.mjs",
+  "module": "anim-sequence.esm.js",
+  "jsnext:main": "anim-sequence.esm.js",
   "files": [
-    "anim-sequence?(-debug).@(min.js|mjs)",
+    "anim-sequence?(-debug).@(min.js|esm.js)",
     "bower.json"
   ],
   "devDependencies": {
