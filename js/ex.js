@@ -3,27 +3,20 @@
 function initTimeline(view, valueCallback, frameCallback, duration, timing, repeatInterval) {
   'use strict';
 
-  var
-    SCALE_WIDTH = 740,
-    POINTER_WIDTH = 32,
-    POINTER_HEIGHT = 32,
-    POINTER_TOP_OFFSET = 24,
-    POINTER_MIN_LEFT = -POINTER_WIDTH / 2,
-    POINTER_MAX_LEFT = SCALE_WIDTH - POINTER_WIDTH / 2,
-    POINTER_LEN = POINTER_MAX_LEFT - POINTER_MIN_LEFT,
-
+  var POINTER_WIDTH = 32,
     panel = view.parentNode.insertBefore(document.createElement('div'), view.nextSibling),
     playButton = panel.appendChild(document.createElement('button')),
     reverseCheck = document.createElement('input'),
     timeScale = panel.appendChild(document.createElement('div')),
     timePoint = timeScale.appendChild(document.createElement('div')),
-    timePointStyle = timePoint.style,
-
-    playing = false, reverse = false, timeRatio = 0,
+    playing = false,
+    reverse = false,
+    timeRatio = 0,
+    pointerMinLeft, pointerMaxLeft, pointerLen,
     animId, repeatTimer, draggable, pointBBox;
 
   function setTimeScale(timeRatio) {
-    timePointStyle.left = timeRatio * POINTER_LEN + POINTER_MIN_LEFT + 'px';
+    draggable.left = timeRatio * pointerLen + pointerMinLeft;
   }
 
   function playStop(forcePlay) {
@@ -69,17 +62,22 @@ function initTimeline(view, valueCallback, frameCallback, duration, timing, repe
   pointBBox = timeScale.getBoundingClientRect();
   pointBBox = {
     left: pointBBox.left + window.pageXOffset - POINTER_WIDTH / 2,
-    top: pointBBox.top + window.pageYOffset + POINTER_TOP_OFFSET,
+    top: pointBBox.top + window.pageYOffset,
     width: pointBBox.width + POINTER_WIDTH,
-    height: POINTER_HEIGHT
+    height: 0
   };
-  draggable = new Draggable(timePoint, {
+  pointerMinLeft = pointBBox.left;
+  pointerMaxLeft = pointBBox.left + pointBBox.width - POINTER_WIDTH;
+  pointerLen = pointerMaxLeft - pointerMinLeft;
+
+  draggable = new PlainDraggable(timePoint, {
     containment: pointBBox,
     onDrag: function() {
       playStop(false);
     },
-    onMove: function(bBox) {
-      timeRatio = (bBox.left - pointBBox.left) / POINTER_LEN;
+    onMove: function() {
+      var bBox = this.rect;
+      timeRatio = (bBox.left - pointBBox.left) / pointerLen;
       AnimSequence.start(animId, reverse, timeRatio);
     }
   });
