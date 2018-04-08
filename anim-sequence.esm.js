@@ -12,72 +12,75 @@
 
 // *** Currently, this code except `export` is not ES2015. ***
 
-var FUNC_KEYS = {
-  'ease': [0.25, 0.1, 0.25, 1],
-  'linear': [0, 0, 1, 1],
-  'ease-in': [0.42, 0, 1, 1],
-  'ease-out': [0, 0, 0.58, 1],
-  'ease-in-out': [0.42, 0, 0.58, 1]
-},
-    MSPF = 1000 / 60 / 2,
-    // precision ms/frame (FPS: 60)
+var
+  FUNC_KEYS = {
+    ease: [0.25, 0.1, 0.25, 1],
+    linear: [0, 0, 1, 1],
+    'ease-in': [0.42, 0, 1, 1],
+    'ease-out': [0, 0, 0.58, 1],
+    'ease-in-out': [0.42, 0, 0.58, 1]
+  },
+  MSPF = 1000 / 60 / 2, // precision ms/frame (FPS: 60)
 
-requestAnim = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
-  setTimeout(callback, MSPF);
-},
-    cancelAnim = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame || window.msCancelAnimationFrame || function (requestID) {
-  clearTimeout(requestID);
-},
-    isFinite = Number.isFinite || function (value) {
-  return typeof value === 'number' && window.isFinite(value);
-},
+  requestAnim = window.requestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    function(callback) { setTimeout(callback, MSPF); },
+
+  cancelAnim = window.cancelAnimationFrame ||
+    window.mozCancelAnimationFrame ||
+    window.webkitCancelAnimationFrame ||
+    window.msCancelAnimationFrame ||
+    function(requestID) { clearTimeout(requestID); },
+
+  isFinite = Number.isFinite || function(value) { return typeof value === 'number' && window.isFinite(value); },
+
+  /**
+   * @callback frameCallback
+   * @param {} value - A value that was made by `valueCallback`.
+   * @param {boolean} finish
+   * @param {number} timeRatio - Progress [0, 1].
+   * @param {number} outputRatio - Progress [0, 1].
+   * @returns {} `false` to stop.
+   */
+
+  /**
+   * @typedef {Object} task
+   * @property {number} animId
+   * @property {frameCallback} frameCallback - Callback that is called each frame.
+   * @property {number} duration
+   * @property {number} count - `0` as infinite.
+   * @property {{value, timeRatio: number, outputRatio: number}[]} frames
+   * @property {(number|null)} framesStart - The time when first frame ran, or `null` if it is not playing.
+   * @property {number} loopsLeft - A counter for loop.
+   * @property {number} lastFrame - index of last frame that ran.
+   * @property {boolean} reverse - Play backwards.
+   */
+
+  /** @type {task[]} */
+  tasks = [],
+  newAnimId = 0,
+  requestID;
 
 
-/**
- * @callback frameCallback
- * @param {} value - A value that was made by `valueCallback`.
- * @param {boolean} finish
- * @param {number} timeRatio - Progress [0, 1].
- * @param {number} outputRatio - Progress [0, 1].
- * @returns {} `false` to stop.
- */
-
-/**
- * @typedef {Object} task
- * @property {number} animId
- * @property {frameCallback} frameCallback - Callback that is called each frame.
- * @property {number} duration
- * @property {number} count - `0` as infinite.
- * @property {{value, timeRatio: number, outputRatio: number}[]} frames
- * @property {(number|null)} framesStart - The time when first frame ran, or `null` if it is not playing.
- * @property {number} loopsLeft - A counter for loop.
- * @property {number} lastFrame - index of last frame that ran.
- * @property {boolean} reverse - Play backwards.
- */
-
-/** @type {task[]} */
-tasks = [],
-    newAnimId = 0,
-    requestID;
 
 function step() {
   var now = Date.now(),
-      next = false;
+    next = false;
   if (requestID) {
     cancelAnim.call(window, requestID);
     requestID = null;
   }
 
-  tasks.forEach(function (task) {
+  tasks.forEach(function(task) {
     var timeLen, loops, frame;
 
-    if (!task.framesStart) {
-      return;
-    }
+    if (!task.framesStart) { return; }
     timeLen = now - task.framesStart;
 
     if (timeLen >= task.duration && task.count && task.loopsLeft <= 1) {
-      frame = task.frames[task.lastFrame = task.reverse ? 0 : task.frames.length - 1];
+      frame = task.frames[(task.lastFrame = task.reverse ? 0 : task.frames.length - 1)];
       task.frameCallback(frame.value, true, frame.timeRatio, frame.outputRatio);
       task.framesStart = null;
       return;
@@ -85,9 +88,8 @@ function step() {
     if (timeLen > task.duration) {
       loops = Math.floor(timeLen / task.duration);
       if (task.count) {
-        if (loops >= task.loopsLeft) {
-          // Here `task.loopsLeft > 1`
-          frame = task.frames[task.lastFrame = task.reverse ? 0 : task.frames.length - 1];
+        if (loops >= task.loopsLeft) { // Here `task.loopsLeft > 1`
+          frame = task.frames[(task.lastFrame = task.reverse ? 0 : task.frames.length - 1)];
           task.frameCallback(frame.value, true, frame.timeRatio, frame.outputRatio);
           task.framesStart = null;
           return;
@@ -98,10 +100,8 @@ function step() {
       timeLen = now - task.framesStart;
     }
 
-    if (task.reverse) {
-      timeLen = task.duration - timeLen;
-    }
-    frame = task.frames[task.lastFrame = Math.round(timeLen / MSPF)];
+    if (task.reverse) { timeLen = task.duration - timeLen; }
+    frame = task.frames[(task.lastFrame = Math.round(timeLen / MSPF))];
     if (task.frameCallback(frame.value, false, frame.timeRatio, frame.outputRatio) !== false) {
       next = true;
     } else {
@@ -109,10 +109,9 @@ function step() {
     }
   });
 
-  if (next) {
-    requestID = requestAnim.call(window, step);
-  }
+  if (next) { requestID = requestAnim.call(window, step); }
 }
+
 
 function startTask(task, timeRatio) {
   task.framesStart = Date.now();
@@ -142,23 +141,17 @@ var AnimSequence = {
    * @param {number|boolean} [timeRatio] - Play from the midst. [0, 1], or `false` that prevents it starting.
    * @returns {number} animId to control the task.
    */
-  add: function add(valueCallback, frameCallback, duration, count, timing, reverse, timeRatio) {
+  add: function(valueCallback, frameCallback, duration, count, timing, reverse, timeRatio) {
     var animId = ++newAnimId,
-        task,
-        frames,
-        stepX,
-        stepT,
-        nextX,
-        t,
-        point;
+      task, frames, stepX, stepT, nextX, t, point;
 
     function getPoint(t) {
       var t2 = t * t,
-          t3 = t2 * t,
-          t1 = 1 - t,
-          t12 = t1 * t1,
-          p1f = 3 * t12 * t,
-          p2f = 3 * t1 * t2;
+        t3 = t2 * t,
+        t1 = 1 - t,
+        t12 = t1 * t1,
+        p1f = 3 * t12 * t,
+        p2f = 3 * t1 * t2;
       return {
         x: p1f * timing[0] + p2f * timing[2] + t3,
         y: p1f * timing[1] + p2f * timing[3] + t3
@@ -166,14 +159,12 @@ var AnimSequence = {
     }
 
     function newFrame(timeRatio, outputRatio) {
-      return { value: valueCallback(outputRatio),
-        timeRatio: timeRatio, outputRatio: outputRatio };
+      return {value: valueCallback(outputRatio),
+        timeRatio: timeRatio, outputRatio: outputRatio};
     }
 
-    if (typeof timing === 'string') {
-      timing = FUNC_KEYS[timing];
-    }
-    valueCallback = valueCallback || function () {};
+    if (typeof timing === 'string') { timing = FUNC_KEYS[timing]; }
+    valueCallback = valueCallback || function() {};
 
     // Generate `frames` list
     if (duration < MSPF) {
@@ -182,11 +173,11 @@ var AnimSequence = {
       stepX = MSPF / duration;
       frames = [newFrame(0, 0)];
 
-      if (timing[0] === 0 && timing[1] === 0 && timing[2] === 1 && timing[3] === 1) {
-        // linear
+      if (timing[0] === 0 && timing[1] === 0 && timing[2] === 1 && timing[3] === 1) { // linear
         for (nextX = stepX; nextX <= 1; nextX += stepX) {
           frames.push(newFrame(nextX, nextX)); // x === y
         }
+
       } else {
         stepT = stepX / 10; // precision for `t`
         nextX = stepX;
@@ -209,16 +200,14 @@ var AnimSequence = {
       reverse: !!reverse
     };
     tasks.push(task);
-    if (timeRatio !== false) {
-      startTask(task, timeRatio);
-    }
+    if (timeRatio !== false) { startTask(task, timeRatio); }
 
     return animId;
   },
 
-  remove: function remove(animId) {
+  remove: function(animId) {
     var iRemove;
-    if (tasks.some(function (task, i) {
+    if (tasks.some(function(task, i) {
       if (task.animId === animId) {
         iRemove = i;
         task.framesStart = null; // for `tasks.forEach` that is playing now.
@@ -236,8 +225,8 @@ var AnimSequence = {
    * @param {number} [timeRatio] - Play from the midst. [0, 1]
    * @returns {void}
    */
-  start: function start(animId, reverse, timeRatio) {
-    tasks.some(function (task) {
+  start: function(animId, reverse, timeRatio) {
+    tasks.some(function(task) {
       if (task.animId === animId) {
         task.reverse = !!reverse;
         startTask(task, timeRatio);
@@ -252,15 +241,13 @@ var AnimSequence = {
    * @param {boolean} [getTimeRatioByFrame] - Return timeRatio of last frame that ran. [0, 1]
    * @returns {(number|undefined)} timeRatio [0, 1]
    */
-  stop: function stop(animId, getTimeRatioByFrame) {
+  stop: function(animId, getTimeRatioByFrame) {
     var timeRatio;
-    tasks.some(function (task) {
+    tasks.some(function(task) {
       if (task.animId === animId) {
         if (!getTimeRatioByFrame) {
           timeRatio = (Date.now() - task.framesStart) / task.duration;
-          if (task.reverse) {
-            timeRatio = 1 - timeRatio;
-          }
+          if (task.reverse) { timeRatio = 1 - timeRatio; }
           if (timeRatio < 0) {
             timeRatio = 0;
           } else if (timeRatio > 1) {
@@ -277,10 +264,12 @@ var AnimSequence = {
     return timeRatio;
   },
 
-  validTiming: function validTiming(timing) {
-    return typeof timing === 'string' ? FUNC_KEYS[timing] : Array.isArray(timing) && [0, 1, 2, 3].every(function (i) {
-      return isFinite(timing[i]) && timing[i] >= 0 && timing[i] <= 1;
-    }) ? [timing[0], timing[1], timing[2], timing[3]] : null;
+  validTiming: function(timing) {
+    return typeof timing === 'string' ? FUNC_KEYS[timing] :
+      Array.isArray(timing) && [0, 1, 2, 3].every(function(i) {
+        return isFinite(timing[i]) && timing[i] >= 0 && timing[i] <= 1;
+      }) ? [timing[0], timing[1], timing[2], timing[3]] :
+      null;
   }
 };
 

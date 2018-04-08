@@ -56,11 +56,6 @@ module.exports = {
               }
             }
           },
-          // ================================ Babel
-          {
-            loader: 'babel-loader',
-            options: {presets: [['es2015', {modules: false}]]}
-          },
           // ================================ Preprocess
           PREPROC_REMOVE_TAGS.length ? {
             loader: 'skeleton-loader',

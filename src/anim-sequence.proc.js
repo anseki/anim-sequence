@@ -14,8 +14,8 @@
 
 var
   FUNC_KEYS = {
-    'ease': [0.25, 0.1, 0.25, 1],
-    'linear': [0, 0, 1, 1],
+    ease: [0.25, 0.1, 0.25, 1],
+    linear: [0, 0, 1, 1],
     'ease-in': [0.42, 0, 1, 1],
     'ease-out': [0, 0, 0.58, 1],
     'ease-in-out': [0.42, 0, 0.58, 1]
@@ -66,7 +66,8 @@ var
 
 
 function step() {
-  var now = Date.now(), next = false;
+  var now = Date.now(),
+    next = false;
   if (requestID) {
     cancelAnim.call(window, requestID);
     requestID = null;
@@ -141,12 +142,16 @@ var AnimSequence = {
    * @returns {number} animId to control the task.
    */
   add: function(valueCallback, frameCallback, duration, count, timing, reverse, timeRatio) {
-    var animId = ++newAnimId, task, frames,
-      stepX, stepT, nextX, t, point;
+    var animId = ++newAnimId,
+      task, frames, stepX, stepT, nextX, t, point;
 
     function getPoint(t) {
-      var t2 = t * t, t3 = t2 * t, t1 = 1 - t, t12 = t1 * t1,
-        p1f = 3 * t12 * t, p2f = 3 * t1 * t2;
+      var t2 = t * t,
+        t3 = t2 * t,
+        t1 = 1 - t,
+        t12 = t1 * t1,
+        p1f = 3 * t12 * t,
+        p2f = 3 * t1 * t2;
       return {
         x: p1f * timing[0] + p2f * timing[2] + t3,
         y: p1f * timing[1] + p2f * timing[3] + t3
