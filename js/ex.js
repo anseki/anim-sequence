@@ -76,8 +76,7 @@ function initTimeline(view, valueCallback, frameCallback, duration, timing, repe
       playStop(false);
     },
     onMove: function() {
-      var bBox = this.rect;
-      timeRatio = (bBox.left - pointBBox.left) / pointerLen;
+      timeRatio = (this.left - pointerMinLeft) / pointerLen;
       AnimSequence.start(animId, reverse, timeRatio);
     }
   });
