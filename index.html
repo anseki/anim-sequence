@@ -80,9 +80,9 @@ window.addEventListener('load', function() {
     MARKER_X_OFFSET = -MARKER_WIDTH / 2,
     MARKER_Y_OFFSET = -MARKER_HEIGHT / 2,
 
-    IS_TRIDENT = !!document.uniqueID,
     IS_EDGE = '-ms-scroll-limit' in document.documentElement.style &&
-      '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled;
+      '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled,
+    IS_TRIDENT = !IS_EDGE && !!document.uniqueID; // Future Edge might support `document.uniqueID`.
 
   lineStyle.strokeDasharray = lineLen + ',' + lineLen;
   lineStyle.strokeDashoffset = -lineLen + 'px';
