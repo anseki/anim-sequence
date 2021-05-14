@@ -1,4 +1,3 @@
-/* line 7, ex.scss */
 .stage {
   width: 784px;
   height: 320px;
@@ -8,7 +7,6 @@
   position: relative;
 }
 
-/* line 16, ex.scss */
 .panel {
   margin: 5px 0 10px;
   width: 100%;
@@ -16,14 +14,12 @@
   position: relative;
 }
 
-/* line 23, ex.scss */
 .play-button {
   min-width: 0;
   position: absolute;
   left: 0;
   top: 0;
 }
-/* line 29, ex.scss */
 .play-button:not(.playing) > div {
   box-sizing: border-box;
   width: 20px;
@@ -31,7 +27,6 @@
   border-left: 8px solid #d2fba9;
   border-right: 8px solid #d2fba9;
 }
-/* line 37, ex.scss */
 .play-button.playing > div {
   width: 0;
   height: 0;
@@ -40,14 +35,12 @@
   border-bottom: 10px solid transparent;
 }
 
-/* line 46, ex.scss */
 .panel > label {
   position: absolute;
   left: 0;
   bottom: 0;
 }
 
-/* line 52, ex.scss */
 .time-scale {
   width: 740px;
   height: 12px;
@@ -57,12 +50,9 @@
   top: 0;
 }
 
-/* line 61, ex.scss */
 .time-point {
   width: 32px;
   height: 32px;
-  -moz-border-radius: 50%;
-  -webkit-border-radius: 50%;
   border-radius: 50%;
   background-color: #1f5baf;
   position: absolute;
@@ -70,7 +60,6 @@
   top: 24px;
   z-index: 10;
 }
-/* line 71, ex.scss */
 .time-point > div {
   width: 0;
   height: 0;
@@ -82,7 +71,6 @@
   top: -18px;
 }
 
-/* line 83, ex.scss */
 .tip {
   position: absolute;
   left: 128px;
@@ -93,80 +81,64 @@
   line-height: 1;
 }
 
-/* line 95, ex.scss */
 #ex-010-01 svg {
   position: absolute;
   left: 0;
   top: 0;
 }
 
-/* line 101, ex.scss */
 #ex-010-01-1 {
   position: absolute;
   left: 3px;
   top: 158px;
 }
 
-/* line 107, ex.scss */
 #ex-010-01-2 {
   position: absolute;
   left: 703px;
   top: 156px;
 }
 
-/* line 113, ex.scss */
 #ex-010-01-line {
   fill: none;
   stroke-width: 4px;
   stroke: #d83256;
 }
 
-/* line 119, ex.scss */
 #ex-010-01-marker-symbol {
   overflow: visible;
 }
-/* line 121, ex.scss */
 #ex-010-01-marker-symbol path {
   fill: #d83256;
 }
 
-/* line 126, ex.scss */
 #ex-010-02 {
   width: 480px;
   height: 480px;
 }
 
-/* line 131, ex.scss */
 #ex-010-02-ring {
   box-sizing: border-box;
   width: 472px;
   height: 472px;
   border: 8px solid #999;
-  -moz-border-radius: 50%;
-  -webkit-border-radius: 50%;
   border-radius: 50%;
   position: absolute;
   left: 4px;
   top: 4px;
 }
 
-/* line 146, ex.scss */
 #ex-010-02-1 {
   position: absolute;
   left: 190px;
   top: 374px;
-  -moz-transform-origin: 50% -134px;
-  -ms-transform-origin: 50% -134px;
-  -webkit-transform-origin: 50% -134px;
   transform-origin: 50% -134px;
 }
 
-/* line 155, ex.scss */
 #ex-020 {
   height: 64px;
 }
 
-/* line 159, ex.scss */
 #ex-020-01 {
   width: 48px;
   height: 48px;
