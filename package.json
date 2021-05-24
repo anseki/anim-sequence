@@ -19,7 +19,7 @@
     "bower.json"
   ],
   "devDependencies": {
-    "cross-env": "^5.2.0",
+    "cross-env": "^7.0.3",
     "pre-proc": "^1.0.2",
     "skeleton-loader": "^2.0.0",
     "webpack": "^4.15.1",
